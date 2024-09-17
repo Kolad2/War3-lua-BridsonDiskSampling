@@ -51,6 +51,7 @@ do
                 end
             end
         end
+        return self.samples
     end
 
     function BDS:add_sample(_x, _y)
