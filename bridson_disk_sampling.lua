@@ -1,0 +1,90 @@
+-- require "src.table.table"
+-- require "src.ndarray"
+-- require "src.grid"
+
+do
+    -- Основной объект BridsonDiskSampling для генерации точек
+    BridsonDiskSampling = {}
+    local BDS = BridsonDiskSampling  -- Сокращенное название
+
+    function BDS:create(xmin, xmax, ymin, ymax, R, K)
+        local obj = {}
+        setmetatable(obj, self)
+        self.__index = self
+
+        obj.K = K or 30  -- Количество попыток для каждой точки
+        obj.R = R        -- Минимальное расстояние между точками
+        obj.R2 = R * R   -- Квадрат минимального расстояния (для оптимизации)
+        obj.xmin = xmin
+        obj.xmax = xmax
+        obj.ymin = ymin
+        obj.ymax = ymax
+        obj.width = xmax - xmin
+        obj.height = ymax - ymin
+        obj.cell_size = R  -- Размер ячейки сетки
+        obj.grid = Grid(obj.xmin, obj.xmax, obj.ymin, obj.ymax, obj.cell_size, obj.cell_size)
+        obj.samples = {}       -- Список сгенерированных точек { {x, y}, ... }
+        obj.active_list = {}   -- Активный список точек для обработки
+        return obj
+    end
+
+    function BDS:generate()
+        -- Шаг 0: Выбираем первую точку случайно в области
+        local x0 = math.random() * self.width + self.xmin
+        local y0 = math.random() * self.height + self.ymin
+        self:add_sample(x0, y0)
+        -- Пока активный список не пуст
+        while #self.active_list > 0 do
+            -- Выбираем случайную точку из активного списка
+            local loc = table.remove(self.active_list)
+            local x, y = loc.x, loc.y
+
+            -- Пробуем сгенерировать до K новых точек вокруг выбранной
+            local al = #self.active_list
+            for i = 1, self.K do
+                local angle = math.random() * 2 * math.pi
+                local radius = math.sqrt(math.random()) * self.R + self.R
+                local nx = x + radius * math.cos(angle)
+                local ny = y + radius * math.sin(angle)
+                if self:is_valid(nx, ny) then
+                    self:add_sample(nx, ny)
+                end
+            end
+        end
+    end
+
+    function BDS:add_sample(_x, _y)
+        local cell = self.grid:get_cell(_x, _y)
+        print(cell)
+        local loc = {x=_x, y=_y}
+        table.insert(self.samples, loc)
+        table.insert(self.active_list, loc)
+        local index = #self.samples
+        cell.index = index
+    end
+
+    function BDS:is_in_bounds(x, y)
+        return x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax
+    end
+
+    function BDS:is_valid(x, y)
+        if not self:is_in_bounds(x, y) then return false end
+        local cell = self.grid:get_cell(x, y)
+        if cell.index then return false end
+        local neighbors = self.grid:get_neighbors(x, y)
+        for _, cell in ipairs(neighbors) do
+            local index = cell.index
+            if index then
+                local sx, sy = self.samples[index].x, self.samples[index].y
+                local dx = x - sx
+                local dy = y - sy
+                if dx * dx + dy * dy < self.R2 then
+                    return false
+                end
+            end
+        end
+        return true
+    end
+end
+
+
