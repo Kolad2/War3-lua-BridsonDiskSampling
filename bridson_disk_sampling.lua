@@ -33,6 +33,7 @@ do -- require "table", "ndarray", "grid"
     end
 
     function BDS:generate()
+        print("BDS, начало генерации")
         -- Шаг 0: Выбираем первую точку случайно в области
         local x0 = math.random() * self.width + self.xmin
         local y0 = math.random() * self.height + self.ymin

@@ -7,5 +7,5 @@ function QuasiRandomSystem(rect)
     local bds = BDS:create(-50, 50, -50, 50, 20, 10)
     local samples = bds:generate()
 
-    print(#samples)
+    print("Число семплов", #samples)
 end
