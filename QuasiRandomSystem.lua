@@ -4,6 +4,7 @@ function QuasiRandomSystem(rect)
     local miny = GetRectMinY(rect)
     local maxy = GetRectMaxY(rect)
     ---------------------------------------------------------------------------------
+    print("QuasiRandomSystem")
     local bds = BridsonDiskSampling:create(-50, 50, -50, 50, 20, 10)
     local samples = bds:generate()
 
