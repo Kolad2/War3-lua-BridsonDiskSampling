@@ -1,12 +1,16 @@
--- require "src.table.table"
--- require "src.ndarray"
--- require "src.grid"
+do -- require "table", "ndarray", "grid"
 
-do
     -- Основной объект BridsonDiskSampling для генерации точек
     BridsonDiskSampling = {}
     local BDS = BridsonDiskSampling  -- Сокращенное название
 
+    ---create
+    ---@param xmin number
+    ---@param xmax number
+    ---@param ymin number
+    ---@param ymax number
+    ---@param R number
+    ---@param K number
     function BDS:create(xmin, xmax, ymin, ymax, R, K)
         local obj = {}
         setmetatable(obj, self)
@@ -86,6 +90,7 @@ do
         end
         return true
     end
+
 end
 
 
