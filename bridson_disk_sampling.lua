@@ -37,9 +37,11 @@ do -- require "table", "ndarray", "grid"
         -- Шаг 0: Выбираем первую точку случайно в области
         local x0 = math.random() * self.width + self.xmin
         local y0 = math.random() * self.height + self.ymin
+        print("BDS, 1")
         self:add_sample(x0, y0)
         -- Пока активный список не пуст
         while #self.active_list > 0 do
+            print("While")
             -- Выбираем случайную точку из активного списка
             local loc = table.remove(self.active_list)
             local x, y = loc.x, loc.y
@@ -60,13 +62,15 @@ do -- require "table", "ndarray", "grid"
     end
 
     function BDS:add_sample(_x, _y)
+        print("BDS, 2")
         local cell = self.grid:get_cell(_x, _y)
-        print(cell)
+        print("BDS, 3")
         local loc = {x=_x, y=_y}
         table.insert(self.samples, loc)
         table.insert(self.active_list, loc)
         local index = #self.samples
         cell.index = index
+        print("BDS, 5")
     end
 
     function BDS:is_in_bounds(x, y)
