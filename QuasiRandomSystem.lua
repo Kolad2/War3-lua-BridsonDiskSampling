@@ -1,12 +1,13 @@
-function QuasiRandomSystem(rect)
+---@return BridsonDiskSampling
+function QuasiRandomSystem(rect, min_distance)
     local minx = GetRectMinX(rect)
     local maxx = GetRectMaxX(rect)
     local miny = GetRectMinY(rect)
     local maxy = GetRectMaxY(rect)
-    ---------------------------------------------------------------------------------
-    print("QuasiRandomSystem")
-    local bds = BridsonDiskSampling:create(-50, 50, -50, 50, 20, 10)
-    local samples = bds:generate()
-
-    print("Число семплов", #samples)
+    local min_distance = min_distance or 1000
+    -------------------------------------------------------------------------------
+    local samples = BridsonDiskSampling(minx, maxx, miny, maxy, min_distance, 10):generate()
+    table.shuffle(samples)
+    return samples
 end
+

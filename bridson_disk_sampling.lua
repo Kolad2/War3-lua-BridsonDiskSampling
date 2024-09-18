@@ -1,9 +1,12 @@
 do -- require "table", "ndarray", "grid"
 
     -- Основной объект BridsonDiskSampling для генерации точек
+    ---@class BridsonDiskSampling
     BridsonDiskSampling = {}
     local BDS = BridsonDiskSampling  -- Сокращенное название
-
+    local object_meta = {
+        __index = BDS
+    }
     ---create
     ---@param xmin number
     ---@param xmax number
@@ -12,10 +15,7 @@ do -- require "table", "ndarray", "grid"
     ---@param R number
     ---@param K number
     function BDS:create(xmin, xmax, ymin, ymax, R, K)
-        local obj = {}
-        setmetatable(obj, self)
-        self.__index = self
-
+        local obj = setmetatable({}, object_meta)
         obj.K = K or 30  -- Количество попыток для каждой точки
         obj.R = R        -- Минимальное расстояние между точками
         obj.R2 = R * R   -- Квадрат минимального расстояния (для оптимизации)
@@ -89,6 +89,12 @@ do -- require "table", "ndarray", "grid"
         end
         return true
     end
+
+    local meta = {
+        __call = BDS.create
+    }
+
+    setmetatable(BDS, meta)
 end
 
 
