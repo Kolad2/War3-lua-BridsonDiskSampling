@@ -76,6 +76,7 @@ do -- require "table", "ndarray", "grid"
         local cell = self.grid:get_cell(x, y)
         if cell.index then return false end
         local neighbors = self.grid:get_neighbors(x, y)
+        --print(#neighbors)
         for _, cell in ipairs(neighbors) do
             local index = cell.index
             if index then
